@@ -1,0 +1,418 @@
+{
+  "id": "e3ee4916-4cd1-497b-8319-a5ca838f164c",
+  "prevId": "e8610ce6-881e-4175-8d1b-225cb5911a70",
+  "version": "7",
+  "dialect": "postgresql",
+  "tables": {
+    "public.espaces": {
+      "name": "espaces",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "slug": {
+          "name": "slug",
+          "type": "varchar(40)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "nom": {
+          "name": "nom",
+          "type": "varchar(60)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "emoji": {
+          "name": "emoji",
+          "type": "varchar(16)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "couleur": {
+          "name": "couleur",
+          "type": "varchar(9)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "description": {
+          "name": "description",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "ordre": {
+          "name": "ordre",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 0
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "espaces_slug_unique": {
+          "name": "espaces_slug_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "slug"
+          ]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.histoires": {
+      "name": "histoires",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "auteur_id": {
+          "name": "auteur_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "espace_id": {
+          "name": "espace_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "titre": {
+          "name": "titre",
+          "type": "varchar(150)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "contenu": {
+          "name": "contenu",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "avertissement": {
+          "name": "avertissement",
+          "type": "varchar(200)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "statut": {
+          "name": "statut",
+          "type": "statut_histoire",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'brouillon'"
+        },
+        "cree_le": {
+          "name": "cree_le",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "publiee_le": {
+          "name": "publiee_le",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "histoires_auteur_id_utilisateurs_id_fk": {
+          "name": "histoires_auteur_id_utilisateurs_id_fk",
+          "tableFrom": "histoires",
+          "tableTo": "utilisateurs",
+          "columnsFrom": [
+            "auteur_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "histoires_espace_id_espaces_id_fk": {
+          "name": "histoires_espace_id_espaces_id_fk",
+          "tableFrom": "histoires",
+          "tableTo": "espaces",
+          "columnsFrom": [
+            "espace_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.moi_aussi": {
+      "name": "moi_aussi",
+      "schema": "",
+      "columns": {
+        "histoire_id": {
+          "name": "histoire_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "utilisateur_id": {
+          "name": "utilisateur_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "cree_le": {
+          "name": "cree_le",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "moi_aussi_histoire_id_histoires_id_fk": {
+          "name": "moi_aussi_histoire_id_histoires_id_fk",
+          "tableFrom": "moi_aussi",
+          "tableTo": "histoires",
+          "columnsFrom": [
+            "histoire_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "moi_aussi_utilisateur_id_utilisateurs_id_fk": {
+          "name": "moi_aussi_utilisateur_id_utilisateurs_id_fk",
+          "tableFrom": "moi_aussi",
+          "tableTo": "utilisateurs",
+          "columnsFrom": [
+            "utilisateur_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {
+        "moi_aussi_histoire_id_utilisateur_id_pk": {
+          "name": "moi_aussi_histoire_id_utilisateur_id_pk",
+          "columns": [
+            "histoire_id",
+            "utilisateur_id"
+          ]
+        }
+      },
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.signalements": {
+      "name": "signalements",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "histoire_id": {
+          "name": "histoire_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "signaleur_id": {
+          "name": "signaleur_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "raison": {
+          "name": "raison",
+          "type": "varchar(300)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "statut": {
+          "name": "statut",
+          "type": "statut_signalement",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'en_attente'"
+        },
+        "cree_le": {
+          "name": "cree_le",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "signalements_histoire_id_histoires_id_fk": {
+          "name": "signalements_histoire_id_histoires_id_fk",
+          "tableFrom": "signalements",
+          "tableTo": "histoires",
+          "columnsFrom": [
+            "histoire_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "signalements_signaleur_id_utilisateurs_id_fk": {
+          "name": "signalements_signaleur_id_utilisateurs_id_fk",
+          "tableFrom": "signalements",
+          "tableTo": "utilisateurs",
+          "columnsFrom": [
+            "signaleur_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "signalements_histoire_id_signaleur_id_unique": {
+          "name": "signalements_histoire_id_signaleur_id_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "histoire_id",
+            "signaleur_id"
+          ]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.utilisateurs": {
+      "name": "utilisateurs",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "pseudo": {
+          "name": "pseudo",
+          "type": "varchar(30)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "mot_de_passe_hash": {
+          "name": "mot_de_passe_hash",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "role": {
+          "name": "role",
+          "type": "role_utilisateur",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'membre'"
+        },
+        "cree_le": {
+          "name": "cree_le",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "utilisateurs_pseudo_unique": {
+          "name": "utilisateurs_pseudo_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "pseudo"
+          ]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    }
+  },
+  "enums": {
+    "public.role_utilisateur": {
+      "name": "role_utilisateur",
+      "schema": "public",
+      "values": [
+        "membre",
+        "moderateur"
+      ]
+    },
+    "public.statut_histoire": {
+      "name": "statut_histoire",
+      "schema": "public",
+      "values": [
+        "brouillon",
+        "publiee"
+      ]
+    },
+    "public.statut_signalement": {
+      "name": "statut_signalement",
+      "schema": "public",
+      "values": [
+        "en_attente",
+        "traite"
+      ]
+    }
+  },
+  "schemas": {},
+  "sequences": {},
+  "roles": {},
+  "policies": {},
+  "views": {},
+  "_meta": {
+    "columns": {},
+    "schemas": {},
+    "tables": {}
+  }
+}

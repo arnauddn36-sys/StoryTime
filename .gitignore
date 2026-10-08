@@ -1,0 +1,19 @@
+# --- Secrets : ne JAMAIS envoyer sur GitHub ---
+.env
+.env.*
+!.env.example
+
+# --- Dépendances installées (se réinstallent avec "bun install") ---
+node_modules/
+
+# --- Fichiers générés par la compilation ---
+dist/
+build/
+
+# --- Logs et fichiers temporaires ---
+*.log
+.DS_Store
+
+# --- Fichiers d'éditeur ---
+.vscode/
+.idea/

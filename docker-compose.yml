@@ -1,0 +1,18 @@
+# Lance le backend et le frontend ensemble : "docker compose up --build"
+# La base de données est chez Supabase, donc pas de conteneur PostgreSQL ici.
+services:
+  backend:
+    build: ./backend            # construit l'image depuis backend/Dockerfile
+    ports:
+      - "3000:3000"             # port de ta machine : port du conteneur
+    env_file:
+      - .env                    # charge les secrets depuis le fichier .env
+    restart: unless-stopped     # redémarre automatiquement en cas de plantage
+
+  frontend:
+    build: ./frontend           # construit l'image depuis frontend/Dockerfile
+    ports:
+      - "5173:5173"
+    depends_on:
+      - backend                 # démarre après le backend
+    restart: unless-stopped

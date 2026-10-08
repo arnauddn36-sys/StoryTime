@@ -1,0 +1,4 @@
+@import "tailwindcss"; /* charge Tailwind */
+
+/* Le mode sombre s'active quand la balise <html> a la classe "dark" */
+@custom-variant dark (&:where(.dark, .dark *));
