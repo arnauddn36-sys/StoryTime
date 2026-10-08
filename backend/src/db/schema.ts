@@ -99,3 +99,4 @@ export const signalements = pgTable(
   // Une personne ne peut signaler la même histoire qu'une seule fois
   (table) => [unique().on(table.histoireId, table.signaleurId)],
 );
+

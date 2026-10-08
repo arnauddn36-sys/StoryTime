@@ -7,6 +7,7 @@ import { sql } from "drizzle-orm"; // pour écrire une petite requête SQL de te
 import { env } from "./config/env"; // variables d'environnement validées
 import { db } from "./db/client"; // connexion base de données
 import auth from "./routes/auth";
+import histoires from "./routes/histoires";
 
 
 // Création de l'application
@@ -39,6 +40,9 @@ app.get("/api/health", async (c) => {
 
 // Routes d'authentification (inscription, connexion)
 app.route("/api/auth", auth);
+
+// Routes pour les histoires (liste, lecture, création, etc.)
+app.route("/api/histoires", histoires);
 
 // Route inconnue : réponse 404 propre en JSON
 app.notFound((c) => c.json({ erreur: "Route introuvable" }, 404));
