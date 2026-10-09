@@ -2,3 +2,99 @@
 
 /* Le mode sombre s'active quand la balise <html> a la classe "dark" */
 @custom-variant dark (&:where(.dark, .dark *));
+
+/* Barres de défilement et contrôles sombres en mode sombre */
+html.dark {
+  color-scheme: dark;
+}
+
+/* Police de l'interface */
+body {
+  font-family: "Bricolage Grotesque", system-ui, sans-serif;
+}
+
+/* Police des récits (lecture longue) */
+.font-recit {
+  font-family: "Literata", Georgia, serif;
+}
+
+/* Animations */
+@keyframes entree {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes derive {
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+  50% {
+    transform: translate(40px, -30px) scale(1.08);
+  }
+}
+
+@keyframes pouf {
+  from {
+    opacity: 1;
+    transform: translateY(0) scale(0.6);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-48px) scale(1.2);
+  }
+}
+
+.animate-entree {
+  animation: entree 0.8s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.animate-derive {
+  animation: derive 22s ease-in-out infinite;
+}
+.animate-derive-decale {
+  animation: derive 22s ease-in-out -11s infinite;
+}
+.animate-pouf {
+  animation: pouf 0.7s ease-out both;
+}
+
+/* Dégradé du fond : matin pêche vers soir bleuté (clair) et nuit violette (sombre) */
+.fond-crepuscule {
+  background: linear-gradient(
+    135deg,
+    #ffe4d2,
+    #f8c8dc 35%,
+    #d4c8f7 70%,
+    #f8cec4
+  );
+}
+.dark .fond-crepuscule {
+  background: linear-gradient(160deg, #14122b, #231c4d 55%, #3a1f52);
+}
+
+/* Anneau de focus visible au clavier */
+:focus-visible {
+  outline: 2px solid #4f46e5;
+  outline-offset: 3px;
+}
+.dark :focus-visible {
+  outline-color: #ddd6fe;
+}
+
+/* Respect des personnes qui réduisent les animations */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  ::before,
+  ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
