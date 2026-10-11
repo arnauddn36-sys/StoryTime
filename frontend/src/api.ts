@@ -7,6 +7,14 @@ export type Utilisateur = {
 
 export type ReponseAuth = { token: string; utilisateur: Utilisateur };
 
+export type Espace = {
+  slug: string; // ex. "football"
+  nom: string; // ex. "StoryTime Football"
+  emoji: string;
+  couleur: string;
+  description: string;
+};
+
 export type HistoireResume = {
   id: string;
   titre: string;
@@ -35,6 +43,11 @@ export type NouvelleHistoire = {
   contenu: string;
   avertissement?: string;
 };
+
+// « StoryTime Football » devient « Football » (affichage dans les pastilles)
+export function nomCourt(nom: string): string {
+  return nom.replace(/^StoryTime\s+/, "");
+}
 
 // ---------- Le token de connexion, gardé dans le navigateur ----------
 const CLE_TOKEN = "token";
@@ -102,6 +115,8 @@ export const api = {
       methode: "POST",
       corps: { pseudo, motDePasse },
     }),
+
+  espaces: () => appeler<{ espaces: Espace[] }>("/api/espaces"),
 
   histoires: (espace?: string, page = 1) => {
     const params = new URLSearchParams({ page: String(page) });

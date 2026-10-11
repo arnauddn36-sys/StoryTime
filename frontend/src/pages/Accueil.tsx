@@ -1,19 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router";
-import { api, type HistoireResume } from "../api";
-
-const espaces = [
-  "Football",
-  "Couple",
-  "Argent",
-  "Famille",
-  "École",
-  "Travail",
-  "Quartier",
-  "Foi",
-  "Musique",
-  "Injustice",
-];
+import { api, nomCourt, type Espace, type HistoireResume } from "../api";
+import { useAuth } from "../auth";
 
 const etapes = [
   {
@@ -90,15 +78,23 @@ function CarteExemple() {
 }
 
 export default function Accueil() {
+  const { utilisateur } = useAuth();
   // null = chargement en cours
   const [histoires, setHistoires] = useState<HistoireResume[] | null>(null);
   const [erreur, setErreur] = useState(false);
+  const [espaces, setEspaces] = useState<Espace[]>([]);
 
   useEffect(() => {
     api
       .histoires()
       .then((reponse) => setHistoires(reponse.histoires))
       .catch(() => setErreur(true));
+
+    // La liste des espaces vient de la base : un nouvel espace apparaît tout seul
+    api
+      .espaces()
+      .then((reponse) => setEspaces(reponse.espaces))
+      .catch(() => {});
   }, []);
 
   return (
@@ -141,46 +137,70 @@ export default function Accueil() {
         </ol>
       </section>
 
-      {/* Les espaces */}
-      <section>
-        <h2 className="text-2xl font-bold sm:text-3xl">
-          Dix espaces pour se reconnaître
-        </h2>
-        <ul className="mt-6 flex flex-wrap gap-2">
-          {espaces.map((nom) => (
-            <li
-              key={nom}
-              className="rounded-full bg-white/60 px-4 py-2 text-sm font-medium ring-1 ring-white/70 dark:bg-white/10 dark:ring-white/10"
-            >
-              {nom}
-            </li>
-          ))}
-        </ul>
-      </section>
+      {/* Les espaces (lus dans la base, donc toujours à jour) */}
+      {espaces.length > 0 && (
+        <section>
+          <h2 className="text-2xl font-bold sm:text-3xl">
+            {espaces.length} espaces pour se reconnaître
+          </h2>
+          <ul className="mt-6 flex flex-wrap gap-2">
+            {espaces.map((e) => (
+              <li
+                key={e.slug}
+                className="inline-flex items-center gap-2 rounded-full bg-white/60 px-4 py-2 text-sm font-medium ring-1 ring-white/70 dark:bg-white/10 dark:ring-white/10"
+              >
+                <span aria-hidden="true">{e.emoji}</span>
+                {nomCourt(e.nom)}
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
 
-      {/* Accès : inscription et connexion, chacun sur sa page */}
+      {/* Appel à l'action : inscription et connexion, ou écrire une histoire une fois connecté */}
       <section className="rounded-3xl bg-linear-to-br from-white/55 to-white/25 p-8 text-center text-indigo-950 shadow-xl shadow-indigo-600/10 ring-1 ring-white/70 backdrop-blur-xl sm:p-14 dark:from-white/10 dark:to-white/5 dark:text-white dark:ring-white/15">
-        <h2 className="text-2xl font-bold sm:text-4xl">
-          Prêt à raconter la tienne ?
-        </h2>
-        <p className="mx-auto mt-3 max-w-md text-indigo-950/75 dark:text-white/70">
-          Crée ton compte en moins d'une minute, ou reprends là où tu t'étais
-          arrêté.
-        </p>
-        <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
-          <Link
-            to="/inscription"
-            className="rounded-full bg-linear-to-r from-indigo-600/25 to-pink-600/25 px-7 py-3 font-semibold text-indigo-950 shadow-lg shadow-indigo-600/10 ring-1 ring-white/80 transition hover:from-indigo-600/35 hover:to-pink-600/35 active:scale-95 dark:from-indigo-400/30 dark:to-pink-500/30 dark:text-white dark:ring-white/25 dark:hover:from-indigo-400/40 dark:hover:to-pink-500/40"
-          >
-            Créer un compte
-          </Link>
-          <Link
-            to="/connexion"
-            className="rounded-full px-7 py-3 font-semibold text-indigo-950 ring-1 ring-indigo-950/25 transition hover:bg-white/40 active:scale-95 dark:text-white dark:ring-white/30 dark:hover:bg-white/10"
-          >
-            Se connecter
-          </Link>
-        </div>
+        {utilisateur ? (
+          <>
+            <h2 className="text-2xl font-bold sm:text-4xl">
+              Une histoire à raconter ?
+            </h2>
+            <p className="mx-auto mt-3 max-w-md text-indigo-950/75 dark:text-white/70">
+              Quelqu'un, quelque part, s'y reconnaîtra.
+            </p>
+            <div className="mt-8 flex justify-center">
+              <Link
+                to="/ecrire"
+                className="rounded-full bg-linear-to-r from-indigo-600/25 to-pink-600/25 px-7 py-3 font-semibold text-indigo-950 shadow-lg shadow-indigo-600/10 ring-1 ring-white/80 transition hover:from-indigo-600/35 hover:to-pink-600/35 active:scale-95 dark:from-indigo-400/30 dark:to-pink-500/30 dark:text-white dark:ring-white/25 dark:hover:from-indigo-400/40 dark:hover:to-pink-500/40"
+              >
+                Écrire une histoire
+              </Link>
+            </div>
+          </>
+        ) : (
+          <>
+            <h2 className="text-2xl font-bold sm:text-4xl">
+              Prêt à raconter la tienne ?
+            </h2>
+            <p className="mx-auto mt-3 max-w-md text-indigo-950/75 dark:text-white/70">
+              Crée ton compte en moins d'une minute, ou reprends là où tu
+              t'étais arrêté.
+            </p>
+            <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
+              <Link
+                to="/inscription"
+                className="rounded-full bg-linear-to-r from-indigo-600/25 to-pink-600/25 px-7 py-3 font-semibold text-indigo-950 shadow-lg shadow-indigo-600/10 ring-1 ring-white/80 transition hover:from-indigo-600/35 hover:to-pink-600/35 active:scale-95 dark:from-indigo-400/30 dark:to-pink-500/30 dark:text-white dark:ring-white/25 dark:hover:from-indigo-400/40 dark:hover:to-pink-500/40"
+              >
+                Créer un compte
+              </Link>
+              <Link
+                to="/connexion"
+                className="rounded-full px-7 py-3 font-semibold text-indigo-950 ring-1 ring-indigo-950/25 transition hover:bg-white/40 active:scale-95 dark:text-white dark:ring-white/30 dark:hover:bg-white/10"
+              >
+                Se connecter
+              </Link>
+            </div>
+          </>
+        )}
       </section>
 
       {/* Histoires récentes (viennent de ton API) */}
@@ -200,8 +220,9 @@ export default function Accueil() {
         )}
         {histoires?.length === 0 && (
           <p className="mt-6 text-indigo-950/70 dark:text-white/60">
-            Aucune histoire pour le moment. Crée un compte pour publier la
-            première.
+            {utilisateur
+              ? "Aucune histoire pour le moment. Publie la première."
+              : "Aucune histoire pour le moment. Crée un compte pour publier la première."}
           </p>
         )}
 

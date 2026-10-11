@@ -8,6 +8,8 @@ import { env } from "./config/env"; // variables d'environnement validées
 import { db } from "./db/client"; // connexion base de données
 import auth from "./routes/auth";
 import histoires from "./routes/histoires";
+import espaces from "./routes/espaces";
+
 
 
 // Création de l'application
@@ -43,6 +45,9 @@ app.route("/api/auth", auth);
 
 // Routes pour les histoires (liste, lecture, création, etc.)
 app.route("/api/histoires", histoires);
+
+// Routes pour les espaces (liste, lecture, création, etc.)
+app.route("/api/espaces", espaces);
 
 // Route inconnue : réponse 404 propre en JSON
 app.notFound((c) => c.json({ erreur: "Route introuvable" }, 404));

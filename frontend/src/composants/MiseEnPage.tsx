@@ -1,7 +1,10 @@
 import { useEffect, useState } from "react";
 import { Link, Outlet } from "react-router";
+import { useAuth } from "../auth";
 
 export default function MiseEnPage() {
+  const { utilisateur, deconnexion } = useAuth();
+
   // Thème : choix précédent, sinon préférence du téléphone
   const [sombre, setSombre] = useState(
     () =>
@@ -33,18 +36,42 @@ export default function MiseEnPage() {
           </Link>
 
           <div className="flex items-center gap-2">
-            <Link
-              to="/connexion"
-              className="rounded-full px-4 py-2 text-sm font-semibold transition hover:bg-white/60 dark:hover:bg-white/10"
-            >
-              Se connecter
-            </Link>
-            <Link
-              to="/inscription"
-              className="hidden rounded-full bg-linear-to-r from-indigo-600/25 to-pink-600/25 px-4 py-2 text-sm font-semibold text-indigo-950 shadow-md shadow-indigo-600/10 ring-1 ring-indigo-600/30 transition hover:from-indigo-600/35 hover:to-pink-600/35 sm:inline-flex dark:from-indigo-400/30 dark:to-pink-500/30 dark:text-white dark:ring-white/25 dark:hover:from-indigo-400/40 dark:hover:to-pink-500/40"
-            >
-              Créer un compte
-            </Link>
+            {utilisateur ? (
+              <>
+                {/* Connecté : écrire, le pseudo et le bouton de déconnexion */}
+                <Link
+                  to="/ecrire"
+                  className="hidden sm:inline-flex rounded-full bg-linear-to-r from-indigo-600/25 to-pink-600/25 px-4 py-2 text-sm font-semibold text-indigo-950 shadow-md shadow-indigo-600/10 ring-1 ring-indigo-600/30 transition hover:from-indigo-600/35 hover:to-pink-600/35 dark:from-indigo-400/30 dark:to-pink-500/30 dark:text-white dark:ring-white/25 dark:hover:from-indigo-400/40 dark:hover:to-pink-500/40"
+                >
+                  Écrire une histoire
+                </Link>
+                <span className="hidden max-w-36 truncate text-sm font-semibold sm:inline">
+                  {utilisateur.pseudo}
+                </span>
+                <button
+                  onClick={deconnexion}
+                  className="rounded-full px-4 py-2 text-sm font-semibold ring-1 ring-indigo-950/20 transition hover:bg-white/60 dark:ring-white/25 dark:hover:bg-white/10"
+                >
+                  Se déconnecter
+                </button>
+              </>
+            ) : (
+              <>
+                {/* Pas connecté : les deux accès */}
+                <Link
+                  to="/connexion"
+                  className="rounded-full px-4 py-2 text-sm font-semibold transition hover:bg-white/60 dark:hover:bg-white/10"
+                >
+                  Se connecter
+                </Link>
+                <Link
+                  to="/inscription"
+                  className="hidden rounded-full bg-linear-to-r from-indigo-600/25 to-pink-600/25 px-4 py-2 text-sm font-semibold text-indigo-950 shadow-md shadow-indigo-600/10 ring-1 ring-indigo-600/30 transition hover:from-indigo-600/35 hover:to-pink-600/35 sm:inline-flex dark:from-indigo-400/30 dark:to-pink-500/30 dark:text-white dark:ring-white/25 dark:hover:from-indigo-400/40 dark:hover:to-pink-500/40"
+                >
+                  Créer un compte
+                </Link>
+              </>
+            )}
             <button
               onClick={() => setSombre(!sombre)}
               aria-label={
